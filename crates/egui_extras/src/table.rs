@@ -182,6 +182,7 @@ impl<'a> TableBuilder<'a> {
                 widths: &widths,
                 width_index: 0,
                 striped: false,
+                selected: false,
                 height,
             });
             layout.allocate_rect();
@@ -437,6 +438,7 @@ impl<'a> TableBody<'a> {
             widths: &self.widths,
             width_index: 0,
             striped: self.striped && self.row_nr % 2 == 0,
+            selected: false,
             height,
         });
 
@@ -498,6 +500,7 @@ impl<'a> TableBody<'a> {
                     widths: &self.widths,
                     width_index: 0,
                     striped: self.striped && idx % 2 == 0,
+                    selected: false,
                     height: row_height_sans_spacing,
                 },
             );
@@ -561,6 +564,7 @@ impl<'a> TableBody<'a> {
                     widths: &self.widths,
                     width_index: 0,
                     striped: self.striped && row_index % 2 == 0,
+                    selected: false,
                     height: row_height,
                 };
                 populate_row(row_index, tr);
@@ -575,6 +579,7 @@ impl<'a> TableBody<'a> {
                 widths: &self.widths,
                 width_index: 0,
                 striped: self.striped && row_index % 2 == 0,
+                selected: false,
                 height: row_height,
             };
             populate_row(row_index, tr);
@@ -617,10 +622,16 @@ pub struct TableRow<'a, 'b> {
     widths: &'b [f32],
     width_index: usize,
     striped: bool,
+    selected: bool,
     height: f32,
 }
 
 impl<'a, 'b> TableRow<'a, 'b> {
+    /// Set whether this row is selected.
+    pub fn set_selected(&mut self, selected: bool) {
+        self.selected = selected;
+    }
+
     /// Add the contents of a column.
     pub fn col(&mut self, add_contents: impl FnOnce(&mut Ui)) -> Response {
         let width = if let Some(width) = self.widths.get(self.width_index) {
@@ -637,7 +648,9 @@ impl<'a, 'b> TableRow<'a, 'b> {
         let width = CellSize::Absolute(width);
         let height = CellSize::Absolute(self.height);
 
-        if self.striped {
+        if self.selected {
+            self.layout.add_selected(width, height, add_contents)
+        } else if self.striped {
             self.layout.add_striped(width, height, add_contents)
         } else {
             self.layout.add(width, height, add_contents)
