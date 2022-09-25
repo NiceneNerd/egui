@@ -96,18 +96,21 @@ impl<'l> StripLayout<'l> {
         &mut self,
         width: CellSize,
         height: CellSize,
+        sense: Option<Sense>,
         add_contents: impl FnOnce(&mut Ui),
     ) -> Response {
         let rect = self.cell_rect(&width, &height);
         let used_rect = self.cell(rect, add_contents);
         self.set_pos(rect);
-        self.ui.allocate_rect(rect.union(used_rect), Sense::hover())
+        self.ui
+            .allocate_rect(rect.union(used_rect), sense.unwrap_or_else(Sense::hover))
     }
 
     pub(crate) fn add_striped(
         &mut self,
         width: CellSize,
         height: CellSize,
+        sense: Option<Sense>,
         add_contents: impl FnOnce(&mut Ui),
     ) -> Response {
         let rect = self.cell_rect(&width, &height);
@@ -119,13 +122,14 @@ impl<'l> StripLayout<'l> {
             .painter()
             .rect_filled(rect, 0.0, self.ui.visuals().faint_bg_color);
 
-        self.add(width, height, add_contents)
+        self.add(width, height, sense, add_contents)
     }
 
     pub(crate) fn add_selected(
         &mut self,
         width: CellSize,
         height: CellSize,
+        sense: Option<Sense>,
         add_contents: impl FnOnce(&mut Ui),
     ) -> Response {
         let rect = self.cell_rect(&width, &height);
@@ -137,7 +141,7 @@ impl<'l> StripLayout<'l> {
             .painter()
             .rect_filled(rect, 0.0, self.ui.visuals().selection.bg_fill);
 
-        self.add(width, height, add_contents)
+        self.add(width, height, sense, add_contents)
     }
 
     /// only needed for layouts with multiple lines, like [`Table`](crate::Table).

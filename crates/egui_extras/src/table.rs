@@ -59,6 +59,7 @@ pub struct TableBuilder<'a> {
     stick_to_bottom: bool,
     scroll_offset_y: Option<f32>,
     cell_layout: egui::Layout,
+    cell_sense: egui::Sense,
 }
 
 impl<'a> TableBuilder<'a> {
@@ -74,6 +75,7 @@ impl<'a> TableBuilder<'a> {
             stick_to_bottom: false,
             scroll_offset_y: None,
             cell_layout,
+            cell_sense: egui::Sense::hover(),
         }
     }
 
@@ -166,6 +168,7 @@ impl<'a> TableBuilder<'a> {
             stick_to_bottom,
             scroll_offset_y,
             cell_layout,
+            cell_sense,
         } = self;
 
         let resize_id = resizable.then(|| ui.id().with("__table_resize"));
@@ -184,6 +187,7 @@ impl<'a> TableBuilder<'a> {
                 striped: false,
                 selected: false,
                 height,
+                sense: cell_sense,
             });
             layout.allocate_rect();
         }
@@ -201,6 +205,7 @@ impl<'a> TableBuilder<'a> {
             stick_to_bottom,
             scroll_offset_y,
             cell_layout,
+            cell_sense,
         }
     }
 
@@ -221,6 +226,7 @@ impl<'a> TableBuilder<'a> {
             stick_to_bottom,
             scroll_offset_y,
             cell_layout,
+            cell_sense,
         } = self;
 
         let resize_id = resizable.then(|| ui.id().with("__table_resize"));
@@ -243,6 +249,7 @@ impl<'a> TableBuilder<'a> {
             stick_to_bottom,
             scroll_offset_y,
             cell_layout,
+            cell_sense,
         }
         .body(body);
     }
@@ -283,6 +290,7 @@ pub struct Table<'a> {
     stick_to_bottom: bool,
     scroll_offset_y: Option<f32>,
     cell_layout: egui::Layout,
+    cell_sense: egui::Sense,
 }
 
 impl<'a> Table<'a> {
@@ -304,6 +312,7 @@ impl<'a> Table<'a> {
             stick_to_bottom,
             scroll_offset_y,
             cell_layout,
+            cell_sense,
         } = self;
 
         let avail_rect = ui.available_rect_before_wrap();
@@ -328,6 +337,7 @@ impl<'a> Table<'a> {
                 row_nr: 0,
                 start_y: avail_rect.top(),
                 end_y: avail_rect.bottom(),
+                cell_sense,
             });
         });
 
@@ -413,6 +423,7 @@ pub struct TableBody<'a> {
     row_nr: usize,
     start_y: f32,
     end_y: f32,
+    cell_sense: egui::Sense,
 }
 
 impl<'a> TableBody<'a> {
@@ -440,6 +451,7 @@ impl<'a> TableBody<'a> {
             striped: self.striped && self.row_nr % 2 == 0,
             selected: false,
             height,
+            sense: self.cell_sense,
         });
 
         self.row_nr += 1;
@@ -502,6 +514,7 @@ impl<'a> TableBody<'a> {
                     striped: self.striped && idx % 2 == 0,
                     selected: false,
                     height: row_height_sans_spacing,
+                    sense: self.cell_sense,
                 },
             );
         }
@@ -566,6 +579,7 @@ impl<'a> TableBody<'a> {
                     striped: self.striped && row_index % 2 == 0,
                     selected: false,
                     height: row_height,
+                    sense: self.cell_sense,
                 };
                 populate_row(row_index, tr);
                 break;
@@ -581,6 +595,7 @@ impl<'a> TableBody<'a> {
                 striped: self.striped && row_index % 2 == 0,
                 selected: false,
                 height: row_height,
+                sense: self.cell_sense,
             };
             populate_row(row_index, tr);
             cursor_y += (row_height + spacing.y) as f64;
@@ -624,6 +639,7 @@ pub struct TableRow<'a, 'b> {
     striped: bool,
     selected: bool,
     height: f32,
+    sense: egui::Sense,
 }
 
 impl<'a, 'b> TableRow<'a, 'b> {
@@ -649,11 +665,14 @@ impl<'a, 'b> TableRow<'a, 'b> {
         let height = CellSize::Absolute(self.height);
 
         if self.selected {
-            self.layout.add_selected(width, height, add_contents)
+            self.layout
+                .add_selected(width, height, Some(self.sense), add_contents)
         } else if self.striped {
-            self.layout.add_striped(width, height, add_contents)
+            self.layout
+                .add_striped(width, height, Some(self.sense), add_contents)
         } else {
-            self.layout.add(width, height, add_contents)
+            self.layout
+                .add(width, height, Some(self.sense), add_contents)
         }
     }
 }
