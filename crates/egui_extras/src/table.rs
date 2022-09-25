@@ -131,6 +131,12 @@ impl<'a> TableBuilder<'a> {
         self
     }
 
+    /// Set the sense to register on cells
+    pub fn cell_sense(mut self, cell_sense: egui::Sense) -> Self {
+        self.cell_sense = cell_sense;
+        self
+    }
+
     /// Allocate space for one column.
     pub fn column(mut self, width: Size) -> Self {
         self.sizing.add(width);
@@ -644,8 +650,9 @@ pub struct TableRow<'a, 'b> {
 
 impl<'a, 'b> TableRow<'a, 'b> {
     /// Set whether this row is selected.
-    pub fn set_selected(&mut self, selected: bool) {
+    pub fn selected(mut self, selected: bool) -> Self {
         self.selected = selected;
+        self
     }
 
     /// Add the contents of a column.
