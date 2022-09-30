@@ -159,8 +159,9 @@ impl Widget for Button {
         }
         desired_size = desired_size.at_least(min_size);
 
+        let icon_spacing = ui.spacing().icon_spacing;
         if let Some(image) = image {
-            desired_size.x += image.size().x + ui.spacing().icon_spacing;
+            desired_size.x += image.size().x + icon_spacing * 2.0;
             desired_size.y = desired_size.y.max(image.size().y + 2.0 * button_padding.y);
         }
 
@@ -170,7 +171,6 @@ impl Widget for Button {
         if ui.is_rect_visible(rect) {
             let visuals = ui.style().interact(&response);
             let text_pos = if let Some(image) = image {
-                let icon_spacing = ui.spacing().icon_spacing;
                 pos2(
                     rect.min.x + button_padding.x + image.size().x + icon_spacing,
                     rect.center().y - 0.5 * text.size().y,
@@ -197,7 +197,10 @@ impl Widget for Button {
 
         if let Some(image) = image {
             let image_rect = Rect::from_min_size(
-                pos2(rect.min.x, rect.center().y - 0.5 - (image.size().y / 2.0)),
+                pos2(
+                    rect.min.x + icon_spacing,
+                    rect.center().y - 0.5 - (image.size().y / 2.0),
+                ),
                 image.size(),
             );
             image.paint_at(ui, image_rect);
