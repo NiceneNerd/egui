@@ -116,6 +116,12 @@ impl Button {
         self
     }
 
+    /// Multiply image color with this. Default is WHITE (no tint).
+    pub fn tint(mut self, tint: impl Into<Color32>) -> Self {
+        self.image = self.image.map(|image| image.tint(tint));
+        self
+    }
+
     pub fn min_size(mut self, min_size: Vec2) -> Self {
         self.min_size = min_size;
         self
