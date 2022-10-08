@@ -270,6 +270,10 @@ pub struct NativeOptions {
     /// You should avoid having a [`egui::CentralPanel`], or make sure its frame is also transparent.
     pub transparent: bool,
 
+    /// On desktop: mouse clicks pass through the window, used for non-interactable overlays
+    /// Generally you would use this in conjunction with always_on_top
+    pub mouse_passthrough: bool,
+
     /// Turn on vertical syncing, limiting the FPS to the display refresh rate.
     ///
     /// The default is `true`.
@@ -389,6 +393,7 @@ impl Default for NativeOptions {
             max_window_size: None,
             resizable: true,
             transparent: false,
+            mouse_passthrough: false,
             vsync: true,
             multisampling: 0,
             depth_buffer: 0,
@@ -450,6 +455,7 @@ pub struct WebOptions {
     /// Which version of WebGl context to select
     ///
     /// Default: [`WebGlContextOption::BestFirst`].
+    #[cfg(feature = "glow")]
     pub webgl_context_option: WebGlContextOption,
 }
 
@@ -459,6 +465,7 @@ impl Default for WebOptions {
         Self {
             follow_system_theme: true,
             default_theme: Theme::Dark,
+            #[cfg(feature = "glow")]
             webgl_context_option: WebGlContextOption::BestFirst,
         }
     }
