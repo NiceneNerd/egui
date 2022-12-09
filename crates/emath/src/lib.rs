@@ -20,13 +20,13 @@
 //!
 
 #![allow(clippy::float_cmp)]
-#![allow(clippy::manual_range_contains)]
 
 use std::ops::{Add, Div, Mul, RangeInclusive, Sub};
 
 // ----------------------------------------------------------------------------
 
 pub mod align;
+mod history;
 mod numeric;
 mod pos2;
 mod rect;
@@ -37,6 +37,7 @@ mod vec2;
 
 pub use {
     align::{Align, Align2},
+    history::History,
     numeric::*,
     pos2::*,
     rect::*,
