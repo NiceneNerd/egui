@@ -168,10 +168,6 @@ impl Widget for Button {
             .then(|| shortcut_text.into_galley(ui, Some(false), f32::INFINITY, TextStyle::Button));
 
         let mut desired_size = text.size();
-        if let Some(image) = image {
-            desired_size.x += image.size().x + ui.spacing().icon_spacing;
-            desired_size.y = desired_size.y.max(image.size().y);
-        }
         if let Some(shortcut_text) = &shortcut_text {
             desired_size.x += ui.spacing().item_spacing.x + shortcut_text.size().x;
             desired_size.y = desired_size.y.max(shortcut_text.size().y);
