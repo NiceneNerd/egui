@@ -355,7 +355,7 @@ pub fn popup_above_or_below_widget<R>(
                 // Note: we use a separate clip-rect for this area, so the popup can be outside the parent.
                 // See https://github.com/emilk/egui/issues/825
                 let frame = Frame::popup(ui.style());
-                let frame_margin = frame.total_margin();
+                let frame_margin = frame.inner_margin + frame.outer_margin;
                 frame
                     .show(ui, |ui| {
                         ui.with_layout(Layout::top_down_justified(Align::LEFT), |ui| {

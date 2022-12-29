@@ -899,11 +899,8 @@ impl TitleBar {
             ui.painter().hline(outer_rect.x_range(), y, stroke);
         }
 
-        // Don't cover the close- and collapse buttons:
-        let double_click_rect = self.rect.shrink2(vec2(32.0, 0.0));
-
         if ui
-            .interact(double_click_rect, self.id, Sense::click())
+            .interact(self.rect, self.id, Sense::click())
             .double_clicked()
             && collapsible
         {
